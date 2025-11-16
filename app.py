@@ -190,9 +190,9 @@ P = logistic(Z)
 
 
 # ============================================================
-# 3D PLOT — PURE WHITE, CENTERED, TIGHT TICKS, NORMAL TITLES
 # ============================================================
-
+# 3D PLOT — TICKS VERY CLOSE, TITLES NORMAL, CENTERED
+# ============================================================
 plt.rcParams['figure.facecolor'] = 'white'
 plt.rcParams['axes.facecolor'] = 'white'
 
@@ -217,40 +217,60 @@ ax.plot_surface(
 )
 
 # ----------------------------------------------------------
-# AXIS LABELS — titles unchanged, tick labels VERY close
+# AXIS TITLES — KEEP NORMAL SPACING
 # ----------------------------------------------------------
 label_font = 6
 
-# axis titles normal spacing
-ax.set_xlabel(split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
-              fontsize=label_font, labelpad=3)
+ax.set_xlabel(
+    split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
+    fontsize=label_font,
+    labelpad=3
+)
 
-ax.set_ylabel(split_label(y_choice),
-              fontsize=label_font, labelpad=3)
+ax.set_ylabel(
+    split_label(y_choice),
+    fontsize=label_font,
+    labelpad=3
+)
 
-ax.set_zlabel(split_label("Probability of Exceedance"),
-              fontsize=label_font, rotation=90, labelpad=5)
+ax.set_zlabel(
+    split_label("Probability of Exceedance"),
+    fontsize=label_font,
+    rotation=90,
+    labelpad=5
+)
 
-# tick labels VERY close to axes
-ax.tick_params(axis='x', pad=0, labelsize=5)
-ax.tick_params(axis='y', pad=0, labelsize=5)
-ax.tick_params(axis='z', pad=0, labelsize=5)
+# ----------------------------------------------------------
+# TICK LABELS — EXTREMELY CLOSE TO AXIS
+# ----------------------------------------------------------
+ax.tick_params(axis='x', pad=-2, labelsize=5)
+ax.tick_params(axis='y', pad=-2, labelsize=5)
+ax.tick_params(axis='z', pad=-3, labelsize=5)
 
 plt.suptitle(f"{damage_state} Damage State", y=0.90, fontsize=7)
 
 plt.tight_layout(pad=0.1)
 
-# save as PNG
+# Save to PNG
 import io
 buf = io.BytesIO()
-plt.savefig(buf, format="png", dpi=300,
-            bbox_inches='tight', facecolor="white")
+plt.savefig(
+    buf, format="png", dpi=300,
+    bbox_inches='tight', facecolor="white"
+)
 buf.seek(0)
 
-# TRUE CENTERING FOR STREAMLIT IMAGES
-st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
+# ----------------------------------------------------------
+# TRUE CENTERING OF IMAGE IN STREAMLIT
+# ----------------------------------------------------------
+st.markdown(
+    "<div style='display:flex; justify-content:center;'>",
+    unsafe_allow_html=True
+)
 st.image(buf, use_container_width=False)
 st.markdown("</div>", unsafe_allow_html=True)
+
+
 
 
 
