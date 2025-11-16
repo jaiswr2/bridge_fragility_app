@@ -254,30 +254,29 @@ ax.set_zlabel(
 )
 
 # ----------------------------------------------------------
-# BIGGER TICK SPACING (CLEAN AXIS)
 # ----------------------------------------------------------
-# X-axis: FSR
-ax.set_xticks([0.0, 0.25, 0.50])
+# EXACTLY 5 TICKS ON ALL AXES
+# ----------------------------------------------------------
+# X-axis (FSR)
+ax.set_xticks(np.linspace(0.0, 0.5, 5))   # 0, 0.125, 0.25, 0.375, 0.5
 
-# Y-axis: Auto spaced into 3 ticks
-y_min, y_max = low, high
-ax.set_yticks(np.linspace(y_min, y_max, 4))
+# Y-axis: dynamic 5 ticks
+ax.set_yticks(np.linspace(low, high, 5))
 
-# Z-axis: 0, 0.5, 1
-ax.set_zticks([0.0, 0.5, 1.0])
+# Z-axis: probability 0 → 1
+ax.set_zticks(np.linspace(0.0, 1.0, 5))
 
-# Make tick labels tiny but readable
+# Tiny tick labels
 ax.tick_params(labelsize=5, pad=0.5)
 
-# ----------------------------------------------------------
-# Damage state title (inside)
-# ----------------------------------------------------------
+# Damage state title inside the plot
 plt.suptitle(f"{damage_state} Damage State", y=0.92, fontsize=7)
 
 # Prevent clipping
 plt.tight_layout()
 
 st.pyplot(fig)
+
 
 
 
