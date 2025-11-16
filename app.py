@@ -190,15 +190,14 @@ P = logistic(Z)
 
 
 # ============================================================
-# PLOT — SMALLER, PURE WHITE BACKGROUND, HIGH RESOLUTION
+# 3D PLOT — PURE WHITE, SMALL, HIGH RESOLUTION, PNG METHOD
 # ============================================================
 plt.rcParams['figure.facecolor'] = 'white'
 plt.rcParams['axes.facecolor'] = 'white'
 
-fig = plt.figure(figsize=(2.5, 1.8), dpi=200)   # << SMALL + HIGH RES
+fig = plt.figure(figsize=(2.2, 1.6), dpi=250)     # << VERY SMALL + SHARP
 ax = fig.add_subplot(111, projection="3d")
 
-# Force white background everywhere
 ax.set_facecolor("white")
 fig.patch.set_facecolor("white")
 
@@ -213,23 +212,28 @@ ax.plot_surface(
     cmap="viridis",
     edgecolor="none",
     shade=True,
-    alpha=0.95
+    alpha=0.97
 )
 
 # Labels
 label_font = 6
 ax.set_xlabel(split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"), fontsize=label_font)
 ax.set_ylabel(split_label(y_choice), fontsize=label_font)
-ax.zaxis.set_rotate_label(False)
-ax.set_zlabel(split_label("Probability of Exceedance"), fontsize=label_font, rotation=0)
+ax.set_zlabel(split_label("Probability of Exceedance"), fontsize=label_font)
 
-ax.tick_params(labelsize=6, pad=0)
+ax.tick_params(labelsize=5, pad=0)
 
-# Title
 plt.suptitle(f"{damage_state} Damage State", y=0.92, fontsize=7)
 
-# Remove padding so background stays white
 plt.tight_layout(pad=0.1)
 
-st.pyplot(fig)
+# --- SAVE AS PNG to ensure pure-white output ---
+import io
+buf = io.BytesIO()
+plt.savefig(buf, format="png", dpi=250, bbox_inches='tight', facecolor="white")
+buf.seek(0)
+
+# --- Display PNG instead of st.pyplot ---
+st.image(buf)
+
 
