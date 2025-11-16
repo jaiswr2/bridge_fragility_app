@@ -219,7 +219,7 @@ ax.plot_surface(
 # ----------------------------------------------------------
 # AXIS TITLES — KEEP NORMAL SPACING
 # ----------------------------------------------------------
-label_font = 5
+label_font = 4
 
 ax.set_xlabel(
     split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
@@ -269,6 +269,7 @@ st.markdown(
 )
 st.image(buf, use_container_width=False)
 st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
