@@ -219,25 +219,25 @@ ax.plot_surface(
 # ----------------------------------------------------------
 # AXIS TITLES — KEEP NORMAL SPACING
 # ----------------------------------------------------------
-label_font = 3
+label_font = 4
 
 ax.set_xlabel(
     split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
     fontsize=label_font,
-    labelpad=-8
+    labelpad=-15
 )
 
 ax.set_ylabel(
     split_label(y_choice),
     fontsize=label_font,
-    labelpad=-8
+    labelpad=-15
 )
 
 ax.set_zlabel(
     split_label("Probability of Exceedance"),
     fontsize=label_font,
     rotation=90,
-    labelpad=-8
+    labelpad=-15
 )
 
 # ----------------------------------------------------------
@@ -269,6 +269,7 @@ st.markdown(
 )
 st.image(buf, use_container_width=False)
 st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
