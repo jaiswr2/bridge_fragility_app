@@ -63,14 +63,13 @@ def z_complete(W, Dc, G, FSR):
 
 
 # ============================================================
-# AXIS LABEL SPLITTER (auto two-row)
+# AXIS LABEL SPLITTER (auto 2-row)
 # ============================================================
 def split_label(text):
-    """Automatically split long axis label into two lines."""
     if "(" in text:
-        name, unit = text.split("(", 1)
-        unit = "(" + unit
-        return f"{name.strip()}\n{unit.strip()}"
+        a, b = text.split("(", 1)
+        b = "(" + b
+        return f"{a.strip()}\n{b.strip()}"
     return text
 
 
@@ -82,42 +81,40 @@ st.title("Fragility Surface of Shallow Foundation Bridges")
 
 
 # ============================================================
-# SIDEBAR INPUTS — COMPLETE TABLE 5
+# SIDEBAR INPUTS (all Table-5 parameters)
 # ============================================================
 
-# ---- Superstructure ----
-st.sidebar.header("Superstructure Parameters")
+# Superstructure
+st.sidebar.header("Superstructure")
 Ls = st.sidebar.number_input("Span Length Ls (m)", 10.0, 60.0, 30.0)
 W = st.sidebar.number_input("Deck Width W (m)", 4.88, 35.0, 12.01)
 hs = st.sidebar.number_input("Slab Thickness hs (m)", 0.10, 0.30, 0.225, step=0.005)
 Ag = st.sidebar.number_input("Girder Area Ag (m²)", 0.15, 0.70, 0.40)
 
-# ---- Substructure ----
-st.sidebar.header("Substructure Parameters")
-ncol = st.sidebar.number_input("Number of Columns per Bent ncol", 2, 6, 2)
+# Substructure
+st.sidebar.header("Substructure")
+ncol = st.sidebar.number_input("Columns per Bent ncol", 2, 6, 2)
 Hc = st.sidebar.number_input("Column Height Hc (m)", 3.0, 14.0, 7.0)
 Dc = st.sidebar.number_input("Column Diameter Dc (m)", 0.5, 2.5, 1.2)
 
-# ---- Foundation ----
-st.sidebar.header("Foundation Parameters")
+# Foundation
+st.sidebar.header("Foundation")
 Bf = st.sidebar.number_input("Footing Width Bf (m)", 1.5, 8.0, 5.2)
 hf = st.sidebar.number_input("Footing Thickness hf (m)", 0.30, 3.00, 1.5)
 
-# ---- Soil ----
+# Soil
 st.sidebar.header("Soil")
 G_input = st.sidebar.number_input("Soil Shear Modulus G (MPa)", 10.0, 300.0, 98.0)
 
-# ---- Traffic ----
-st.sidebar.header("Traffic Load (Included for completeness)")
+# Traffic
+st.sidebar.header("Traffic")
 Wt = st.sidebar.number_input("Truck Weight Wt (kN)", 0.0, 800.0, 300.0)
-Tpx = st.sidebar.number_input("Truck Position Tpx (0–0.75)", 0.00, 0.75, 0.30)
+Tpx = st.sidebar.number_input("Truck Position Tpx", 0.00, 0.75, 0.30)
 
-# ---- Settings ----
-st.sidebar.header("Fragility Surface Settings")
-
+# Settings
+st.sidebar.header("Surface Settings")
 damage_state = st.sidebar.selectbox(
-    "Damage State",
-    ["Minor", "Moderate", "Extensive", "Complete"]
+    "Damage State", ["Minor", "Moderate", "Extensive", "Complete"]
 )
 
 y_choice = st.sidebar.selectbox(
@@ -130,20 +127,17 @@ y_choice = st.sidebar.selectbox(
         "Footing Thickness hf (m)",
         "Girder Area Ag (m²)",
         "Truck Weight Wt (kN)",
-        "Truck Position Tpx"
+        "Truck Position Tpx",
     ]
 )
 
-camera = st.sidebar.radio(
-    "Camera View",
-    ["Left View (Default)", "Front View", "Top-Down View"]
-)
+wireframe_toggle = st.sidebar.checkbox("Show Wireframe Overlay", value=False)
 
 resolution = st.sidebar.slider("Grid Resolution", 20, 80, 40)
 
 
 # ============================================================
-# GRID SETUP
+# GRID
 # ============================================================
 FSR_vals = np.linspace(0, 0.5, resolution)
 
@@ -164,9 +158,7 @@ y_vals = np.linspace(low, high, resolution)
 FSR_grid, Y_grid = np.meshgrid(FSR_vals, y_vals)
 
 
-# ============================================================
-# ASSIGN BASE PARAMETER GRIDS
-# ============================================================
+# Base grids
 W_grid = np.full_like(FSR_grid, W)
 hs_grid = np.full_like(FSR_grid, hs)
 Bf_grid = np.full_like(FSR_grid, Bf)
@@ -177,7 +169,7 @@ G_grid = np.full_like(FSR_grid, G_input)
 Wt_grid = np.full_like(FSR_grid, Wt)
 Tpx_grid = np.full_like(FSR_grid, Tpx)
 
-# Override based on Y-selection
+# Override selected Y-axis variable
 if y_choice == "Soil Shear Modulus G (MPa)": G_grid = Y_grid
 if y_choice == "Deck Width W (m)": W_grid = Y_grid
 if y_choice == "Footing Width Bf (m)": Bf_grid = Y_grid
@@ -189,32 +181,18 @@ if y_choice == "Truck Position Tpx": Tpx_grid = Y_grid
 
 
 # ============================================================
-# COMPUTE PROBABILITY OF EXCEEDANCE
+# COMPUTE FRAGILITY
 # ============================================================
 if damage_state == "Minor":
     Z = z_minor(W_grid, hs_grid, G_grid, FSR_grid)
-
 elif damage_state == "Moderate":
     Z = z_moderate(W_grid, hs_grid, Bf_grid, Ag_grid, Dc_grid, G_grid, FSR_grid)
-
 elif damage_state == "Extensive":
     Z = z_extensive(W_grid, hs_grid, Bf_grid, Ag_grid, Dc_grid, hf_grid, G_grid, FSR_grid)
-
 elif damage_state == "Complete":
     Z = z_complete(W_grid, Dc_grid, G_grid, FSR_grid)
 
 P = logistic(Z)
-
-
-# ============================================================
-# CAMERA SELECTION
-# ============================================================
-if camera == "Left View (Default)":
-    elev, azim = 25, 270
-elif camera == "Front View":
-    elev, azim = 25, 180
-elif camera == "Top-Down View":
-    elev, azim = 90, 270
 
 
 # ============================================================
@@ -223,8 +201,10 @@ elif camera == "Top-Down View":
 fig = plt.figure(figsize=(9, 6))
 ax = fig.add_subplot(111, projection="3d")
 
-ax.view_init(elev=elev, azim=azim)
+# Preferred camera angle
+ax.view_init(elev=25, azim=235)
 
+# Main surface
 surface = ax.plot_surface(
     FSR_grid,
     Y_grid,
@@ -232,19 +212,29 @@ surface = ax.plot_surface(
     cmap="viridis",
     edgecolor="none",
     shade=True,
-    alpha=0.95
+    alpha=0.95,
 )
 
-# MULTI-LINE LABELS
+# Optional wireframe overlay
+if wireframe_toggle:
+    ax.plot_wireframe(
+        FSR_grid,
+        Y_grid,
+        P,
+        color="black",
+        linewidth=0.3,
+        alpha=0.6,
+    )
+
+# Axis labels (2-row)
 ax.set_xlabel(split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"), labelpad=25)
 ax.set_ylabel(split_label(y_choice), labelpad=25)
 ax.set_zlabel(split_label("Probability of Exceedance"), labelpad=25)
 
-# TITLES
-ax.set_title("Fragility Surface of Shallow Foundation Bridges", pad=20)
+# Inside image → ONLY damage state
 plt.suptitle(f"{damage_state} Damage State", y=0.97, fontsize=12)
 
-# REMOVE COLORBAR
+# Remove colorbar
 # fig.colorbar(surface, shrink=0.6, aspect=12)
 
 st.pyplot(fig)
