@@ -212,7 +212,7 @@ ax.set_zlabel("")
 
 # --- MANUAL Z-AXIS LABEL (VERY CLOSE TO AXIS) ---
 ax.text(
-    0.02, 0.5, 1.02,                           # (x, y, z) in DATA coordinates
+    0.02, 0.5, 0.2,                           # (x, y, z) in DATA coordinates
     "Probability of Exceedance",
     fontsize=10,
     rotation=90,                               # vertical
@@ -236,6 +236,7 @@ plt.tight_layout()
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.pyplot(fig)
+
 
 
 
