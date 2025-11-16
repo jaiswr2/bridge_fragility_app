@@ -63,6 +63,18 @@ def z_complete(W, Dc, G, FSR):
 
 
 # ============================================================
+# AXIS LABEL SPLITTER (auto two-row)
+# ============================================================
+def split_label(text):
+    """Automatically split long axis label into two lines."""
+    if "(" in text:
+        name, unit = text.split("(", 1)
+        unit = "(" + unit
+        return f"{name.strip()}\n{unit.strip()}"
+    return text
+
+
+# ============================================================
 # STREAMLIT APP
 # ============================================================
 st.set_page_config(layout="wide")
@@ -70,31 +82,39 @@ st.title("Fragility Surface of Shallow Foundation Bridges")
 
 
 # ============================================================
-# SIDEBAR INPUTS
+# SIDEBAR INPUTS — COMPLETE TABLE 5
 # ============================================================
+
+# ---- Superstructure ----
 st.sidebar.header("Superstructure Parameters")
 Ls = st.sidebar.number_input("Span Length Ls (m)", 10.0, 60.0, 30.0)
 W = st.sidebar.number_input("Deck Width W (m)", 4.88, 35.0, 12.01)
 hs = st.sidebar.number_input("Slab Thickness hs (m)", 0.10, 0.30, 0.225, step=0.005)
 Ag = st.sidebar.number_input("Girder Area Ag (m²)", 0.15, 0.70, 0.40)
 
+# ---- Substructure ----
 st.sidebar.header("Substructure Parameters")
 ncol = st.sidebar.number_input("Number of Columns per Bent ncol", 2, 6, 2)
 Hc = st.sidebar.number_input("Column Height Hc (m)", 3.0, 14.0, 7.0)
 Dc = st.sidebar.number_input("Column Diameter Dc (m)", 0.5, 2.5, 1.2)
 
+# ---- Foundation ----
 st.sidebar.header("Foundation Parameters")
 Bf = st.sidebar.number_input("Footing Width Bf (m)", 1.5, 8.0, 5.2)
 hf = st.sidebar.number_input("Footing Thickness hf (m)", 0.30, 3.00, 1.5)
 
+# ---- Soil ----
 st.sidebar.header("Soil")
 G_input = st.sidebar.number_input("Soil Shear Modulus G (MPa)", 10.0, 300.0, 98.0)
 
-st.sidebar.header("Traffic Load (Not Used in Equation but Included)")
+# ---- Traffic ----
+st.sidebar.header("Traffic Load (Included for completeness)")
 Wt = st.sidebar.number_input("Truck Weight Wt (kN)", 0.0, 800.0, 300.0)
 Tpx = st.sidebar.number_input("Truck Position Tpx (0–0.75)", 0.00, 0.75, 0.30)
 
+# ---- Settings ----
 st.sidebar.header("Fragility Surface Settings")
+
 damage_state = st.sidebar.selectbox(
     "Damage State",
     ["Minor", "Moderate", "Extensive", "Complete"]
@@ -114,15 +134,19 @@ y_choice = st.sidebar.selectbox(
     ]
 )
 
+camera = st.sidebar.radio(
+    "Camera View",
+    ["Left View (Default)", "Front View", "Top-Down View"]
+)
+
 resolution = st.sidebar.slider("Grid Resolution", 20, 80, 40)
 
 
 # ============================================================
-# GRID BUILDING
+# GRID SETUP
 # ============================================================
-FSR_vals = np.linspace(0.0, 0.5, resolution)
+FSR_vals = np.linspace(0, 0.5, resolution)
 
-# Ranges for y-axis
 ranges = {
     "Soil Shear Modulus G (MPa)": (10, 300),
     "Deck Width W (m)": (4.88, 35),
@@ -131,7 +155,7 @@ ranges = {
     "Footing Thickness hf (m)": (0.30, 3.0),
     "Girder Area Ag (m²)": (0.15, 0.70),
     "Truck Weight Wt (kN)": (0, 800),
-    "Truck Position Tpx": (0, 0.75)
+    "Truck Position Tpx": (0, 0.75),
 }
 
 low, high = ranges[y_choice]
@@ -141,7 +165,7 @@ FSR_grid, Y_grid = np.meshgrid(FSR_vals, y_vals)
 
 
 # ============================================================
-# ASSIGN BASE GRID
+# ASSIGN BASE PARAMETER GRIDS
 # ============================================================
 W_grid = np.full_like(FSR_grid, W)
 hs_grid = np.full_like(FSR_grid, hs)
@@ -150,12 +174,10 @@ hf_grid = np.full_like(FSR_grid, hf)
 Dc_grid = np.full_like(FSR_grid, Dc)
 Ag_grid = np.full_like(FSR_grid, Ag)
 G_grid = np.full_like(FSR_grid, G_input)
-
-# Traffic (unused but grid included)
 Wt_grid = np.full_like(FSR_grid, Wt)
 Tpx_grid = np.full_like(FSR_grid, Tpx)
 
-# Override chosen variable
+# Override based on Y-selection
 if y_choice == "Soil Shear Modulus G (MPa)": G_grid = Y_grid
 if y_choice == "Deck Width W (m)": W_grid = Y_grid
 if y_choice == "Footing Width Bf (m)": Bf_grid = Y_grid
@@ -185,12 +207,23 @@ P = logistic(Z)
 
 
 # ============================================================
+# CAMERA SELECTION
+# ============================================================
+if camera == "Left View (Default)":
+    elev, azim = 25, 270
+elif camera == "Front View":
+    elev, azim = 25, 180
+elif camera == "Top-Down View":
+    elev, azim = 90, 270
+
+
+# ============================================================
 # PLOT
 # ============================================================
 fig = plt.figure(figsize=(9, 6))
 ax = fig.add_subplot(111, projection="3d")
 
-ax.view_init(elev=25, azim=235)  # <<< Moves Z-axis to LEFT
+ax.view_init(elev=elev, azim=azim)
 
 surface = ax.plot_surface(
     FSR_grid,
@@ -202,13 +235,16 @@ surface = ax.plot_surface(
     alpha=0.95
 )
 
-# LABELS
-ax.set_xlabel("Foundation Scour Ratio (FSR₁ = FSR₂)", labelpad=20)
-ax.set_ylabel(y_choice, labelpad=20)
-ax.set_zlabel("Probability of Exceedance", labelpad=20)
-ax.set_title(f"Fragility Surface of Shallow Foundation Bridges – {damage_state} Damage State", pad=20)
+# MULTI-LINE LABELS
+ax.set_xlabel(split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"), labelpad=25)
+ax.set_ylabel(split_label(y_choice), labelpad=25)
+ax.set_zlabel(split_label("Probability of Exceedance"), labelpad=25)
 
-# REMOVE HEATMAP LEGEND
-# fig.colorbar(surface, shrink=0.6, aspect=10)
+# TITLES
+ax.set_title("Fragility Surface of Shallow Foundation Bridges", pad=20)
+plt.suptitle(f"{damage_state} Damage State", y=0.97, fontsize=12)
+
+# REMOVE COLORBAR
+# fig.colorbar(surface, shrink=0.6, aspect=12)
 
 st.pyplot(fig)
