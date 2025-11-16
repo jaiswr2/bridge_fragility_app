@@ -254,25 +254,41 @@ ax.set_zlabel(
 )
 
 # ----------------------------------------------------------
+# SMALL LABEL FONTS + TIGHT LABEL SPACING
 # ----------------------------------------------------------
-# EXACTLY 5 TICKS ON ALL AXES
+label_font = 6
+
+ax.set_xlabel(
+    split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
+    fontsize=label_font,
+    labelpad=0    # restored to natural position
+)
+
+ax.set_ylabel(
+    split_label(y_choice),
+    fontsize=label_font,
+    labelpad=0
+)
+
+# Restore clean Z-axis label
+ax.zaxis.set_rotate_label(False)
+ax.set_zlabel(
+    split_label("Probability of Exceedance"),
+    fontsize=label_font,
+    rotation=0,   # horizontal (most visible)
+    labelpad=0
+)
+
 # ----------------------------------------------------------
-# X-axis (FSR)
-ax.set_xticks(np.linspace(0.0, 0.5, 4))   # 0, 0.125, 0.25, 0.375, 0.5
+# RESTORED ORIGINAL TICKS (AUTOMATIC)
+# ----------------------------------------------------------
+ax.tick_params(labelsize=6, pad=1)   # small but readable
 
-# Y-axis: dynamic 5 ticks
-ax.set_yticks(np.linspace(low, high, 4))
-
-# Z-axis: probability 0 → 1
-ax.set_zticks(np.linspace(0.0, 1.0, 4))
-
-# Tiny tick labels
-ax.tick_params(labelsize=5, pad=0.5)
-
-# Damage state title inside the plot
+# ----------------------------------------------------------
+# Damage state title inside plot
+# ----------------------------------------------------------
 plt.suptitle(f"{damage_state} Damage State", y=0.92, fontsize=7)
 
-# Prevent clipping
 plt.tight_layout()
 
 st.pyplot(fig)
