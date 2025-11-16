@@ -282,9 +282,9 @@ with col2:
 with col3:
     st.subheader("Illustrations")
 
-    st.image("1.png", caption="Bridge Elevation (placeholder)", use_container_width=True)
-    st.image("2.png", caption="Scour Configuration (placeholder)", use_container_width=True)
-    st.image("3.png", caption="Response / Fragility Concept (placeholder)", use_container_width=True)
+    st.image("1.png", caption="Bridge Elevation", use_container_width=True)
+    st.image("2.png", caption="Scour Configuration", use_container_width=True)
+    st.image("3.png", caption="Response / Fragility Concept", use_container_width=True)
 
 st.markdown("---")
 
@@ -436,5 +436,6 @@ plt.tight_layout()
 c1, c2, c3 = st.columns([1, 2, 1])
 with c2:
     st.pyplot(fig)
+
 
 
