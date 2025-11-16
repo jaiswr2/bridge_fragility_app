@@ -224,13 +224,13 @@ label_font = 6
 ax.set_xlabel(
     split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
     fontsize=label_font,
-    labelpad=-3
+    labelpad=-5
 )
 
 ax.set_ylabel(
     split_label(y_choice),
     fontsize=label_font,
-    labelpad=-3
+    labelpad=-5
 )
 
 ax.set_zlabel(
@@ -243,9 +243,9 @@ ax.set_zlabel(
 # ----------------------------------------------------------
 # TICK LABELS — EXTREMELY CLOSE TO AXIS
 # ----------------------------------------------------------
-ax.tick_params(axis='x', pad=-2, labelsize=5)
-ax.tick_params(axis='y', pad=-2, labelsize=5)
-ax.tick_params(axis='z', pad=-3, labelsize=5)
+ax.tick_params(axis='x', pad=-5, labelsize=5)
+ax.tick_params(axis='y', pad=-5, labelsize=5)
+ax.tick_params(axis='z', pad=-5, labelsize=5)
 
 plt.suptitle(f"{damage_state} Damage State", y=0.90, fontsize=7)
 
@@ -269,6 +269,7 @@ st.markdown(
 )
 st.image(buf, use_container_width=False)
 st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
