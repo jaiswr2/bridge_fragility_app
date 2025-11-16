@@ -253,31 +253,6 @@ ax.set_zlabel(
     labelpad=-8        # <-- pulls label INTO the figure
 )
 
-# ----------------------------------------------------------
-# SMALL LABEL FONTS + TIGHT LABEL SPACING
-# ----------------------------------------------------------
-label_font = 6
-
-ax.set_xlabel(
-    split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
-    fontsize=label_font,
-    labelpad=0    # restored to natural position
-)
-
-ax.set_ylabel(
-    split_label(y_choice),
-    fontsize=label_font,
-    labelpad=0
-)
-
-# Restore clean Z-axis label
-ax.zaxis.set_rotate_label(False)
-ax.set_zlabel(
-    split_label("Probability of Exceedance"),
-    fontsize=label_font,
-    rotation=0,   # horizontal (most visible)
-    labelpad=0
-)
 
 # ----------------------------------------------------------
 # RESTORED ORIGINAL TICKS (AUTOMATIC)
@@ -292,6 +267,7 @@ plt.suptitle(f"{damage_state} Damage State", y=0.92, fontsize=7)
 plt.tight_layout()
 
 st.pyplot(fig)
+
 
 
 
