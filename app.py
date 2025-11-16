@@ -221,7 +221,7 @@ ax.set_xlabel(split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"), fontsize=
 ax.set_ylabel(split_label(y_choice), fontsize=label_font)
 ax.set_zlabel(split_label("Probability of Exceedance"), fontsize=label_font)
 
-ax.tick_params(labelsize=5, pad=0)
+ax.tick_params(labelsize=-5, pad=0)
 
 plt.suptitle(f"{damage_state} Damage State", y=0.92, fontsize=7)
 
@@ -235,5 +235,6 @@ buf.seek(0)
 
 # --- Display PNG instead of st.pyplot ---
 st.image(buf)
+
 
 
