@@ -63,7 +63,7 @@ def z_complete(W, Dc, G, FSR):
 
 
 # ============================================================
-# Axis Label Splitter (2-row labels)
+# Axis Label Splitter
 # ============================================================
 def split_label(text):
     if "(" in text:
@@ -79,15 +79,16 @@ def split_label(text):
 st.set_page_config(layout="wide")
 st.title("Fragility Surface of Shallow Foundation Bridges")
 
+
 # ============================================================
-# INPUT PANEL AT TOP — 2 COLUMNS
+# INPUT PANEL — TWO BALANCED COLUMNS
 # ============================================================
 
 col1, col2 = st.columns(2)
 
+# Left column
 with col1:
     st.subheader("Superstructure")
-    Ls = st.number_input("Span Length Ls (m)", 10.0, 60.0, 30.0)
     W = st.number_input("Deck Width W (m)", 4.88, 35.0, 12.01)
     hs = st.number_input("Slab Thickness hs (m)", 0.10, 0.30, 0.225, step=0.005)
     Ag = st.number_input("Girder Area Ag (m²)", 0.15, 0.70, 0.40)
@@ -95,27 +96,23 @@ with col1:
     st.subheader("Soil")
     G_input = st.number_input("Soil Shear Modulus G (MPa)", 10.0, 300.0, 98.0)
 
-with col2:
-    st.subheader("Substructure")
-    ncol = st.number_input("Columns per Bent ncol", 2, 6, 2)
-    Hc = st.number_input("Column Height Hc (m)", 3.0, 14.0, 7.0)
-    Dc = st.number_input("Column Diameter Dc (m)", 0.5, 2.5, 1.2)
-
-    st.subheader("Foundation")
-    Bf = st.number_input("Footing Width Bf (m)", 1.5, 8.0, 5.2)
-    hf = st.number_input("Footing Thickness hf (m)", 0.30, 3.00, 1.5)
-
     st.subheader("Traffic")
     Wt = st.number_input("Truck Weight Wt (kN)", 0.0, 800.0, 300.0)
     Tpx = st.number_input("Truck Position Tpx", 0.00, 0.75, 0.30)
 
-st.markdown("---")
+# Right column
+with col2:
+    st.subheader("Substructure")
+    Dc = st.number_input("Column Diameter Dc (m)", 0.5, 2.5, 1.2)
+    Bf = st.number_input("Footing Width Bf (m)", 1.5, 8.0, 5.2)
+    hf = st.number_input("Footing Thickness hf (m)", 0.30, 3.00, 1.5)
 
-# Settings row
-col3, col4 = st.columns(2)
-with col3:
-    damage_state = st.selectbox("Damage State", ["Minor", "Moderate", "Extensive", "Complete"])
-with col4:
+    st.subheader("Damage Model")
+    damage_state = st.selectbox(
+        "Damage State",
+        ["Minor", "Moderate", "Extensive", "Complete"]
+    )
+
     y_choice = st.selectbox(
         "Select Y-axis Parameter",
         [
@@ -130,12 +127,13 @@ with col4:
         ]
     )
 
-wireframe_toggle = st.checkbox("Show Wireframe Overlay", value=False)
-resolution = st.slider("Grid Resolution", 20, 80, 40)
+st.markdown("---")
+
 
 # ============================================================
-# GRID (unchanged)
+# GRID (constant 40 resolution)
 # ============================================================
+resolution = 40
 FSR_vals = np.linspace(0, 0.5, resolution)
 
 ranges = {
@@ -154,7 +152,7 @@ y_vals = np.linspace(low, high, resolution)
 
 FSR_grid, Y_grid = np.meshgrid(FSR_vals, y_vals)
 
-# Base grids (unchanged)
+# Base grids
 W_grid = np.full_like(FSR_grid, W)
 hs_grid = np.full_like(FSR_grid, hs)
 Bf_grid = np.full_like(FSR_grid, Bf)
@@ -175,7 +173,10 @@ if y_choice == "Girder Area Ag (m²)": Ag_grid = Y_grid
 if y_choice == "Truck Weight Wt (kN)": Wt_grid = Y_grid
 if y_choice == "Truck Position Tpx": Tpx_grid = Y_grid
 
-# Compute probability (unchanged)
+
+# ============================================================
+# COMPUTE PROBABILITY OF EXCEEDANCE
+# ============================================================
 if damage_state == "Minor":
     Z = z_minor(W_grid, hs_grid, G_grid, FSR_grid)
 elif damage_state == "Moderate":
@@ -187,21 +188,21 @@ elif damage_state == "Complete":
 
 P = logistic(Z)
 
+
 # ============================================================
-# PLOT — WHITE BACKGROUND (ONLY CHANGE)
+# PLOT — VERY SMALL + WHITE BACKGROUND
 # ============================================================
-fig = plt.figure(figsize=(4.8, 3.0))
+fig = plt.figure(figsize=(3.0, 2.0))   # << 4× smaller
 ax = fig.add_subplot(111, projection="3d")
 
-# White background
 ax.set_facecolor("white")
 fig.patch.set_facecolor("white")
 
-# Your viewing angle
+# Camera angle
 ax.view_init(elev=25, azim=235)
 
 # Surface
-surface = ax.plot_surface(
+ax.plot_surface(
     FSR_grid,
     Y_grid,
     P,
@@ -211,20 +212,13 @@ surface = ax.plot_surface(
     alpha=0.95
 )
 
-# Wireframe
-if wireframe_toggle:
-    ax.plot_wireframe(
-        FSR_grid, Y_grid, P,
-        color="black", linewidth=0.2, alpha=0.5
-    )
-
-# Label styling
+# Labels
 label_font = 6
 
-ax.set_xlabel(split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"), fontsize=label_font, labelpad=0)
-ax.set_ylabel(split_label(y_choice), fontsize=label_font, labelpad=0)
+ax.set_xlabel(split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"), fontsize=label_font)
+ax.set_ylabel(split_label(y_choice), fontsize=label_font)
 ax.zaxis.set_rotate_label(False)
-ax.set_zlabel(split_label("Probability of Exceedance"), fontsize=label_font, rotation=0, labelpad=0)
+ax.set_zlabel(split_label("Probability of Exceedance"), fontsize=label_font, rotation=0)
 
 ax.tick_params(labelsize=6, pad=1)
 
