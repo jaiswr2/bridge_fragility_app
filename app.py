@@ -207,7 +207,7 @@ surf = ax.plot_surface(
 # Axis labels with normal spacing
 ax.set_xlabel("Foundation Scour Ratio (FSR)", fontsize=10, labelpad=10)
 ax.set_ylabel(y_choice, fontsize=10, labelpad=10)
-ax.set_zlabel("Probability of Exceedance", fontsize=10, labelpad=-10)
+ax.set_zlabel("Probability of Exceedance", fontsize=10, labelpad=-5)
 
 # Normal tick spacing
 ax.tick_params(axis='both', which='major', labelsize=8)
@@ -221,4 +221,5 @@ plt.tight_layout()
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.pyplot(fig)
+
 
