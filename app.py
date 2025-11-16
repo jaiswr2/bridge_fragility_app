@@ -196,12 +196,12 @@ P = logistic(Z)
 
 
 # ============================================================
-# PLOT (smaller figure + tiny labels + fixed Z-axis)
+# PLOT (smaller figure + improved visibility)
 # ============================================================
-fig = plt.figure(figsize=(5, 3.2))  # smaller figure
+fig = plt.figure(figsize=(4.8, 3.0))   # even smaller figure
 ax = fig.add_subplot(111, projection="3d")
 
-# Best viewing angle
+# Your preferred camera angle
 ax.view_init(elev=25, azim=235)
 
 # Main surface
@@ -220,48 +220,66 @@ if wireframe_toggle:
     ax.plot_wireframe(
         FSR_grid, Y_grid, P,
         color="black",
-        linewidth=0.25,
+        linewidth=0.2,
         alpha=0.5
     )
 
-# -----------------------------------------
-# SMALLER LABEL FONT SIZE
-# -----------------------------------------
-label_font = 6   # very small and readable
+# ----------------------------------------------------------
+# VERY SMALL AXIS LABEL FONT + VERY SMALL PADDING
+# ----------------------------------------------------------
+label_font = 5  # smaller
 
 ax.set_xlabel(
     split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
     fontsize=label_font,
-    labelpad=0.01
+    labelpad=-2        # CLOSE to axis
 )
 
 ax.set_ylabel(
     split_label(y_choice),
     fontsize=label_font,
-    labelpad=0.01
+    labelpad=-2        # CLOSE to axis
 )
 
-# -----------------------------------------
-# FIX Z-AXIS LABEL VISIBILITY
-# -----------------------------------------
-ax.zaxis.set_rotate_label(False)       # prevent auto rotation
+# ----------------------------------------------------------
+# FIX Z-AXIS LABEL VISIBILITY COMPLETELY
+# ----------------------------------------------------------
+ax.zaxis.set_rotate_label(False)
+
 ax.set_zlabel(
     split_label("Probability of Exceedance"),
     fontsize=label_font,
-    rotation=90,                         # <-- horizontal for visibility
-    labelpad=0.01                        # <-- pushes label inward
+    rotation=0,        # <-- BEST visibility in Streamlit
+    labelpad=-5        # <-- pulls label INTO the figure
 )
 
-# Move tick labels slightly inward
-ax.tick_params(labelsize=5, pad=1)
+# ----------------------------------------------------------
+# BIGGER TICK SPACING (CLEAN AXIS)
+# ----------------------------------------------------------
+# X-axis: FSR
+ax.set_xticks([0.0, 0.25, 0.50])
 
-# Damage state title inside plot
-plt.suptitle(f"{damage_state} Damage State", y=0.93, fontsize=8)
+# Y-axis: Auto spaced into 3 ticks
+y_min, y_max = low, high
+ax.set_yticks(np.linspace(y_min, y_max, 3))
+
+# Z-axis: 0, 0.5, 1
+ax.set_zticks([0.0, 0.5, 1.0])
+
+# Make tick labels tiny but readable
+ax.tick_params(labelsize=5, pad=0.5)
+
+# ----------------------------------------------------------
+# Damage state title (inside)
+# ----------------------------------------------------------
+plt.suptitle(f"{damage_state} Damage State", y=0.92, fontsize=7)
 
 # Prevent clipping
 plt.tight_layout()
 
 st.pyplot(fig)
+
+
 
 
 
