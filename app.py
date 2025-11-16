@@ -261,7 +261,7 @@ ax.set_xticks([0.0, 0.25, 0.50])
 
 # Y-axis: Auto spaced into 3 ticks
 y_min, y_max = low, high
-ax.set_yticks(np.linspace(y_min, y_max, 3))
+ax.set_yticks(np.linspace(y_min, y_max, 4))
 
 # Z-axis: 0, 0.5, 1
 ax.set_zticks([0.0, 0.5, 1.0])
@@ -278,6 +278,7 @@ plt.suptitle(f"{damage_state} Damage State", y=0.92, fontsize=7)
 plt.tight_layout()
 
 st.pyplot(fig)
+
 
 
 
