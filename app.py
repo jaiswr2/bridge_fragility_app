@@ -213,7 +213,7 @@ ax.plot_surface(
     cmap="viridis",
     edgecolor="none",
     shade=True,
-    alpha=0.5
+    alpha=0.97
 )
 
 # ----------------------------------------------------------
@@ -269,6 +269,7 @@ st.markdown(
 )
 st.image(buf, use_container_width=False)
 st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
