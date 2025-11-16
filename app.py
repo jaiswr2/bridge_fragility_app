@@ -207,7 +207,20 @@ surf = ax.plot_surface(
 # Axis labels with normal spacing
 ax.set_xlabel("Foundation Scour Ratio (FSR)", fontsize=10, labelpad=10)
 ax.set_ylabel(y_choice, fontsize=10, labelpad=10)
-ax.set_zlabel("Probability of Exceedance", fontsize=10, labelpad=-2, rotation=90)
+# --- REMOVE default z-axis label ---
+ax.set_zlabel("")
+
+# --- ADD MANUAL VERTICAL Z-LABEL (OPPOSITE DIRECTION) ---
+ax.text2D(
+    0.02, 0.55,                                     # position: left side of plot
+    "Probability of Exceedance",
+    fontsize=10,
+    rotation=90,                                    # vertical
+    va='center',
+    ha='center',
+    transform=ax.figure.transFigure
+)
+
 
 
 
@@ -223,6 +236,7 @@ plt.tight_layout()
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.pyplot(fig)
+
 
 
 
