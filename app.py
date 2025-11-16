@@ -196,12 +196,12 @@ P = logistic(Z)
 
 
 # ============================================================
-# PLOT (smaller figure + improved label visibility)
+# PLOT (smaller figure + tiny labels + fixed Z-axis)
 # ============================================================
-fig = plt.figure(figsize=(6, 4))  
+fig = plt.figure(figsize=(5, 3.2))  # smaller figure
 ax = fig.add_subplot(111, projection="3d")
 
-# Perfect viewing angle
+# Best viewing angle
 ax.view_init(elev=25, azim=235)
 
 # Main surface
@@ -212,55 +212,55 @@ surface = ax.plot_surface(
     cmap="viridis",
     edgecolor="none",
     shade=True,
-    alpha=0.95,
+    alpha=0.95
 )
 
-# Wireframe overlay (optional)
+# Optional wireframe
 if wireframe_toggle:
     ax.plot_wireframe(
-        FSR_grid,
-        Y_grid,
-        P,
+        FSR_grid, Y_grid, P,
         color="black",
-        linewidth=0.3,
-        alpha=0.6,
+        linewidth=0.25,
+        alpha=0.5
     )
 
-# ---------------------------
-# SMALLER AXIS LABEL FONTS
-# ---------------------------
-label_font = 7  # half size
+# -----------------------------------------
+# SMALLER LABEL FONT SIZE
+# -----------------------------------------
+label_font = 6   # very small and readable
 
 ax.set_xlabel(
     split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
-    labelpad=8,
-    fontsize=label_font
+    fontsize=label_font,
+    labelpad=6
 )
+
 ax.set_ylabel(
     split_label(y_choice),
-    labelpad=8,
-    fontsize=label_font
+    fontsize=label_font,
+    labelpad=6
 )
 
-# ---------------------------
+# -----------------------------------------
 # FIX Z-AXIS LABEL VISIBILITY
-# ---------------------------
-ax.zaxis.set_rotate_label(False)   # prevent auto-tilt
+# -----------------------------------------
+ax.zaxis.set_rotate_label(False)       # prevent auto rotation
 ax.set_zlabel(
     split_label("Probability of Exceedance"),
-    labelpad=12,                   # pull closer so visible
     fontsize=label_font,
-    rotation=90                    # vertical orientation for best readability
+    rotation=0,                         # <-- horizontal for visibility
+    labelpad=14                         # <-- pushes label inward
 )
 
-# Tighter tick spacing
-ax.tick_params(labelsize=6, pad=2)
+# Move tick labels slightly inward
+ax.tick_params(labelsize=5, pad=1)
 
-# Damage state inside figure
-plt.suptitle(f"{damage_state} Damage State", y=0.93, fontsize=10)
+# Damage state title inside plot
+plt.suptitle(f"{damage_state} Damage State", y=0.93, fontsize=8)
 
-# Fix margin clipping
+# Prevent clipping
 plt.tight_layout()
 
 st.pyplot(fig)
+
 
