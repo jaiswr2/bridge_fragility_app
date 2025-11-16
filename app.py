@@ -227,7 +227,7 @@ if wireframe_toggle:
 # ----------------------------------------------------------
 # VERY SMALL AXIS LABEL FONT + VERY SMALL PADDING
 # ----------------------------------------------------------
-label_font = 5  # smaller
+label_font = 6  # smaller
 
 ax.set_xlabel(
     split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
@@ -249,7 +249,7 @@ ax.zaxis.set_rotate_label(False)
 ax.set_zlabel(
     split_label("Probability of Exceedance"),
     fontsize=label_font,
-    rotation=0,        # <-- BEST visibility in Streamlit
+    rotation=90,        # <-- BEST visibility in Streamlit
     labelpad=-5        # <-- pulls label INTO the figure
 )
 
@@ -278,6 +278,7 @@ plt.suptitle(f"{damage_state} Damage State", y=0.92, fontsize=7)
 plt.tight_layout()
 
 st.pyplot(fig)
+
 
 
 
