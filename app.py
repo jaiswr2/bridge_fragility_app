@@ -63,7 +63,7 @@ def z_complete(W, Dc, G, FSR):
 
 
 # ============================================================
-# AXIS LABEL SPLITTER (auto 2-row)
+# Axis Label Splitter (2-row labels)
 # ============================================================
 def split_label(text):
     if "(" in text:
@@ -81,7 +81,7 @@ st.title("Fragility Surface of Shallow Foundation Bridges")
 
 
 # ============================================================
-# SIDEBAR INPUTS (all Table-5 parameters)
+# SIDEBAR INPUTS — Complete Table 5 Parameters
 # ============================================================
 
 # Superstructure
@@ -158,7 +158,7 @@ y_vals = np.linspace(low, high, resolution)
 FSR_grid, Y_grid = np.meshgrid(FSR_vals, y_vals)
 
 
-# Base grids
+# Base parameter grids
 W_grid = np.full_like(FSR_grid, W)
 hs_grid = np.full_like(FSR_grid, hs)
 Bf_grid = np.full_like(FSR_grid, Bf)
@@ -169,7 +169,7 @@ G_grid = np.full_like(FSR_grid, G_input)
 Wt_grid = np.full_like(FSR_grid, Wt)
 Tpx_grid = np.full_like(FSR_grid, Tpx)
 
-# Override selected Y-axis variable
+# Apply Y-axis override
 if y_choice == "Soil Shear Modulus G (MPa)": G_grid = Y_grid
 if y_choice == "Deck Width W (m)": W_grid = Y_grid
 if y_choice == "Footing Width Bf (m)": Bf_grid = Y_grid
@@ -181,7 +181,7 @@ if y_choice == "Truck Position Tpx": Tpx_grid = Y_grid
 
 
 # ============================================================
-# COMPUTE FRAGILITY
+# COMPUTE PROBABILITY OF EXCEEDANCE
 # ============================================================
 if damage_state == "Minor":
     Z = z_minor(W_grid, hs_grid, G_grid, FSR_grid)
@@ -196,15 +196,15 @@ P = logistic(Z)
 
 
 # ============================================================
-# PLOT
+# PLOT (smaller figure + labels visible)
 # ============================================================
-fig = plt.figure(figsize=(9, 6))
+fig = plt.figure(figsize=(6, 4))   # <-- smaller image
 ax = fig.add_subplot(111, projection="3d")
 
-# Preferred camera angle
+# Best viewing angle (your preferred one)
 ax.view_init(elev=25, azim=235)
 
-# Main surface
+# Surface plot
 surface = ax.plot_surface(
     FSR_grid,
     Y_grid,
@@ -215,7 +215,7 @@ surface = ax.plot_surface(
     alpha=0.95,
 )
 
-# Optional wireframe overlay
+# Optional wireframe
 if wireframe_toggle:
     ax.plot_wireframe(
         FSR_grid,
@@ -226,15 +226,18 @@ if wireframe_toggle:
         alpha=0.6,
     )
 
-# Axis labels (2-row)
-ax.set_xlabel(split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"), labelpad=25)
-ax.set_ylabel(split_label(y_choice), labelpad=25)
-ax.set_zlabel(split_label("Probability of Exceedance"), labelpad=25)
+# Axis labels (multi-line)
+ax.set_xlabel(split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"), labelpad=10)
+ax.set_ylabel(split_label(y_choice), labelpad=10)
+ax.set_zlabel(split_label("Probability of Exceedance"), labelpad=10)
 
-# Inside image → ONLY damage state
-plt.suptitle(f"{damage_state} Damage State", y=0.97, fontsize=12)
+# Keep labels inside frame
+ax.tick_params(pad=3)
 
-# Remove colorbar
-# fig.colorbar(surface, shrink=0.6, aspect=12)
+# Damage state (inside image)
+plt.suptitle(f"{damage_state} Damage State", y=0.93, fontsize=11)
+
+# Prevent clipping
+plt.tight_layout()
 
 st.pyplot(fig)
