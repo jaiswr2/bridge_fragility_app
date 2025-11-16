@@ -63,17 +63,6 @@ def z_complete(W, Dc, G, FSR):
 
 
 # ============================================================
-# Axis Label Splitter
-# ============================================================
-def split_label(text):
-    if "(" in text:
-        a, b = text.split("(", 1)
-        b = "(" + b
-        return f"{a.strip()}\n{b.strip()}"
-    return text
-
-
-# ============================================================
 # STREAMLIT APP
 # ============================================================
 st.set_page_config(layout="wide")
@@ -190,13 +179,12 @@ P = logistic(Z)
 
 
 # ============================================================
-# ============================================================
-# 3D PLOT — WHITE BACKGROUND, THIN LINES, CENTERED
+# 3D PLOT - Clean and centered
 # ============================================================
 plt.rcParams['figure.facecolor'] = 'white'
 plt.rcParams['axes.facecolor'] = 'white'
 
-fig = plt.figure(figsize=(2.2, 1.6), dpi=300)
+fig = plt.figure(figsize=(8, 6), dpi=150)
 ax = fig.add_subplot(111, projection="3d")
 
 ax.set_facecolor("white")
@@ -206,75 +194,30 @@ fig.patch.set_facecolor("white")
 ax.view_init(elev=25, azim=235)
 
 # Surface with thin lines
-ax.plot_surface(
+surf = ax.plot_surface(
     FSR_grid,
     Y_grid,
     P,
     cmap="viridis",
-    edgecolor="black",
-    linewidth=0.1,
-    shade=True,
-    alpha=0.97
+    linewidth=0.5,  # Thin lines
+    edgecolor='black',  # Black thin edges
+    alpha=0.9
 )
 
-# Thin axis lines
-ax.xaxis.pane.set_edgecolor('black')
-ax.yaxis.pane.set_edgecolor('black')
-ax.zaxis.pane.set_edgecolor('black')
-ax.xaxis.pane.set_linewidth(0.3)
-ax.yaxis.pane.set_linewidth(0.3)
-ax.zaxis.pane.set_linewidth(0.3)
+# Axis labels with normal spacing
+ax.set_xlabel("Foundation Scour Ratio (FSR)", fontsize=10, labelpad=10)
+ax.set_ylabel(y_choice, fontsize=10, labelpad=10)
+ax.set_zlabel("Probability of Exceedance", fontsize=10, labelpad=10)
 
-# ----------------------------------------------------------
-# AXIS TITLES
-# ----------------------------------------------------------
-label_font = 4
+# Normal tick spacing
+ax.tick_params(axis='both', which='major', labelsize=8)
 
-ax.set_xlabel(
-    split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
-    fontsize=label_font,
-    labelpad=-10
-)
+plt.title(f"{damage_state} Damage State", fontsize=12, pad=20)
 
-ax.set_ylabel(
-    split_label(y_choice),
-    fontsize=label_font,
-    labelpad=-10
-)
+# Tight layout for better centering
+plt.tight_layout()
 
-ax.set_zlabel(
-    split_label("Probability of Exceedance"),
-    fontsize=label_font,
-    rotation=270,
-    labelpad=-13
-)
-
-# ----------------------------------------------------------
-# TICK LABELS
-# ----------------------------------------------------------
-ax.tick_params(axis='x', pad=-5, labelsize=4)
-ax.tick_params(axis='y', pad=-5, labelsize=4)
-ax.tick_params(axis='z', pad=-5, labelsize=4)
-
-plt.suptitle(f"{damage_state} Damage State", y=0.90, fontsize=7)
-
-plt.tight_layout(pad=0.1)
-
-# Save to PNG
-import io
-buf = io.BytesIO()
-plt.savefig(
-    buf, format="png", dpi=300,
-    bbox_inches='tight', facecolor="white"
-)
-buf.seek(0)
-
-# ----------------------------------------------------------
-# CENTER IMAGE IN STREAMLIT
-# ----------------------------------------------------------
-st.markdown(
-    "<div style='display:flex; justify-content:center;'>",
-    unsafe_allow_html=True
-)
-st.image(buf, use_container_width=False)
-st.markdown("</div>", unsafe_allow_html=True)
+# Display in Streamlit - centered
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2:
+    st.pyplot(fig)
