@@ -228,9 +228,9 @@ ax.set_zlabel(split_label("Probability of Exceedance"),
 # ----------------------------------------------------------
 # FIX 1: TICK LABELS VERY CLOSE TO AXIS
 # ----------------------------------------------------------
-ax.tick_params(axis='x', pad=-8, labelsize=4)
-ax.tick_params(axis='y', pad=-8, labelsize=4)
-ax.tick_params(axis='z', pad=-8, labelsize=4)
+ax.tick_params(axis='x', pad=-5, labelsize=4)
+ax.tick_params(axis='y', pad=-5, labelsize=4)
+ax.tick_params(axis='z', pad=-5, labelsize=4)
 
 plt.suptitle(f"{damage_state} Damage State", y=0.90, fontsize=7)
 
@@ -248,6 +248,7 @@ buf.seek(0)
 st.markdown("<center>", unsafe_allow_html=True)
 st.image(buf)
 st.markdown("</center>", unsafe_allow_html=True)
+
 
 
 
