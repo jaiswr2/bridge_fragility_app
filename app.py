@@ -190,12 +190,13 @@ P = logistic(Z)
 
 
 # ============================================================
-# 3D PLOT — CENTERED, PURE WHITE, VERY SMALL LABELS
+# 3D PLOT — PURE WHITE, CENTERED, TIGHT TICKS, NORMAL TITLES
 # ============================================================
+
 plt.rcParams['figure.facecolor'] = 'white'
 plt.rcParams['axes.facecolor'] = 'white'
 
-fig = plt.figure(figsize=(2.2, 1.6), dpi=300)  # high-res small
+fig = plt.figure(figsize=(2.2, 1.6), dpi=300)
 ax = fig.add_subplot(111, projection="3d")
 
 ax.set_facecolor("white")
@@ -215,53 +216,43 @@ ax.plot_surface(
     alpha=0.97
 )
 
-# -------------------------------
-# AXIS LABELS — SMALL + TIGHT
-# -------------------------------
-label_font = 5
+# ----------------------------------------------------------
+# AXIS LABELS — titles unchanged, tick labels VERY close
+# ----------------------------------------------------------
+label_font = 6
 
-ax.set_xlabel(
-    split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
-    fontsize=label_font,
-    labelpad=-10  # super tight
-)
+# axis titles normal spacing
+ax.set_xlabel(split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
+              fontsize=label_font, labelpad=3)
 
-ax.set_ylabel(
-    split_label(y_choice),
-    fontsize=label_font,
-    labelpad=-10
-)
+ax.set_ylabel(split_label(y_choice),
+              fontsize=label_font, labelpad=3)
 
-ax.set_zlabel(
-    split_label("Probability of Exceedance"),
-    fontsize=label_font,
-    rotation=90,
-    labelpad=-5   # pull close
-)
+ax.set_zlabel(split_label("Probability of Exceedance"),
+              fontsize=label_font, rotation=90, labelpad=5)
 
-# Smaller ticks
-ax.tick_params(labelsize=4, pad=0)
+# tick labels VERY close to axes
+ax.tick_params(axis='x', pad=0, labelsize=5)
+ax.tick_params(axis='y', pad=0, labelsize=5)
+ax.tick_params(axis='z', pad=0, labelsize=5)
 
 plt.suptitle(f"{damage_state} Damage State", y=0.90, fontsize=7)
 
-plt.tight_layout(pad=0.01)
+plt.tight_layout(pad=0.1)
 
-# Save to PNG
+# save as PNG
 import io
 buf = io.BytesIO()
-plt.savefig(
-    buf,
-    format="png",
-    dpi=300,
-    bbox_inches="tight",
-    facecolor="white"
-)
+plt.savefig(buf, format="png", dpi=300,
+            bbox_inches='tight', facecolor="white")
 buf.seek(0)
 
-# Center the image in Streamlit
+# TRUE CENTERING FOR STREAMLIT IMAGES
 st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
-st.image(buf, use_column_width=False)
+st.image(buf, use_container_width=False)
 st.markdown("</div>", unsafe_allow_html=True)
+
+
 
 
 
