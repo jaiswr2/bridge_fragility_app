@@ -1,7 +1,8 @@
 import numpy as np
 import streamlit as st
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.mplot3d import Axes3D  # needed for 3D
+
 
 # ----------------------------
 # Logistic function
@@ -24,6 +25,8 @@ def z_minor(W, hs, G, FSR):
 
 
 def z_moderate(W, hs, Bf, Ag, Dc, G, FSR):
+    # Original had FSR1^2, FSR2^2, FSR1*FSR2; with FSR1 = FSR2 = FSR:
+    # 35.0672*FSR^2 + 16.4784*FSR^2 - 24.5048*FSR^2 = 27.0408*FSR^2
     return (
         -2.4355
         + 0.52 * W * FSR
@@ -32,9 +35,7 @@ def z_moderate(W, hs, Bf, Ag, Dc, G, FSR):
         + 0.362 * W * FSR
         - 1.2595 * Bf * FSR
         - 0.949 * Ag * Dc
-        + 35.0672 * FSR**2
-        + 16.4784 * FSR**2
-        - 24.5048 * FSR * FSR
+        + 27.0408 * FSR**2
     )
 
 
@@ -56,7 +57,7 @@ def z_extensive(W, hs, Bf, Ag, Dc, hf, G, FSR):
 def z_complete(W, Dc, G, FSR):
     return (
         -5.857
-        + 82.15 * FSR * FSR
+        + 82.15 * FSR**2
         - 0.0102 * W * G
         - 13.996 * Dc * FSR
         + 0.525 * W * FSR
@@ -70,23 +71,20 @@ st.set_page_config(layout="wide")
 st.title("System-Level Bridge Fragility Surface")
 
 # ----------------------------
-# Sidebar Inputs
+# Sidebar Inputs (case-study defaults)
 # ----------------------------
-st.sidebar.header("Bridge Geometry")
+st.sidebar.header("Bridge Geometry (Case Study Defaults)")
 
-W = st.sidebar.slider("Deck width W (m)", 4.88, 35.0, 12.0)
-hs = st.sidebar.slider("Slab thickness hₛ (m)", 0.10, 0.30, 0.20)
-Bf = st.sidebar.slider("Footing width Bf (m)", 1.5, 8.0, 4.0)
-hf = st.sidebar.slider("Footing thickness hf (m)", 0.3, 3.0, 1.0)
-Dc = st.sidebar.slider("Column diameter Dc (m)", 0.5, 2.5, 1.2)
-Ag = st.sidebar.slider("Girder area Ag (m²)", 0.15, 0.70, 0.40)
+# Table 5 ranges, but defaults = case-study bridge
+W = st.sidebar.number_input("Deck width W (m)", min_value=4.88, max_value=35.0, value=12.01)
+hs = st.sidebar.number_input("Slab thickness hₛ (m)", min_value=0.10, max_value=0.30, value=0.225, step=0.005)
+Bf = st.sidebar.number_input("Footing width Bf (m)", min_value=1.5, max_value=8.0, value=5.2, step=0.1)
+hf = st.sidebar.number_input("Footing thickness hf (m)", min_value=0.30, max_value=3.0, value=1.5, step=0.05)
+Dc = st.sidebar.number_input("Column diameter Dc (m)", min_value=0.5, max_value=2.5, value=1.2, step=0.05)
+Ag = st.sidebar.number_input("Girder area Ag (m²)", min_value=0.15, max_value=0.70, value=0.40, step=0.01)
 
 st.sidebar.header("Soil")
-G_input = st.sidebar.slider("Soil shear modulus G (MPa)", 10, 300, 80)
-
-st.sidebar.header("Traffic Load")
-Wt = st.sidebar.slider("Truck weight Wt (kN)", 0, 800, 300)
-Tpx = st.sidebar.slider("Truck position Tpx (0–0.75)", 0.00, 0.75, 0.30)
+G_input = st.sidebar.number_input("Soil shear modulus G (MPa)", min_value=10.0, max_value=300.0, value=98.0, step=1.0)
 
 st.sidebar.header("Surface Options")
 
@@ -100,7 +98,7 @@ y_var = st.sidebar.selectbox(
     ["G", "W", "Bf", "Dc", "hf", "Ag"]
 )
 
-resolution = st.sidebar.slider("Resolution", 20, 80, 40)
+resolution = st.sidebar.slider("Resolution (grid points per axis)", 20, 80, 40)
 
 # ----------------------------
 # Build grids
@@ -108,7 +106,7 @@ resolution = st.sidebar.slider("Resolution", 20, 80, 40)
 FSR_vals = np.linspace(0.0, 0.5, resolution)
 
 if y_var == "G":
-    y_vals = np.linspace(10, 300, resolution)
+    y_vals = np.linspace(10.0, 300.0, resolution)
 elif y_var == "W":
     y_vals = np.linspace(4.88, 35.0, resolution)
 elif y_var == "Bf":
@@ -116,13 +114,13 @@ elif y_var == "Bf":
 elif y_var == "Dc":
     y_vals = np.linspace(0.5, 2.5, resolution)
 elif y_var == "hf":
-    y_vals = np.linspace(0.3, 3.0, resolution)
+    y_vals = np.linspace(0.30, 3.0, resolution)
 elif y_var == "Ag":
-    y_vals = np.linspace(0.15, 0.7, resolution)
+    y_vals = np.linspace(0.15, 0.70, resolution)
 
 FSR_grid, Y_grid = np.meshgrid(FSR_vals, y_vals)
 
-# Assign variables
+# Start from case-study defaults
 W_grid = np.full_like(FSR_grid, W)
 hs_grid = np.full_like(FSR_grid, hs)
 Bf_grid = np.full_like(FSR_grid, Bf)
@@ -131,28 +129,33 @@ Dc_grid = np.full_like(FSR_grid, Dc)
 Ag_grid = np.full_like(FSR_grid, Ag)
 G_grid = np.full_like(FSR_grid, G_input)
 
-# Y-axis overrides
-if y_var == "G": G_grid = Y_grid
-if y_var == "W": W_grid = Y_grid
-if y_var == "Bf": Bf_grid = Y_grid
-if y_var == "Dc": Dc_grid = Y_grid
-if y_var == "hf": hf_grid = Y_grid
-if y_var == "Ag": Ag_grid = Y_grid
+# Override chosen Y-axis parameter
+if y_var == "G":
+    G_grid = Y_grid
+elif y_var == "W":
+    W_grid = Y_grid
+elif y_var == "Bf":
+    Bf_grid = Y_grid
+elif y_var == "Dc":
+    Dc_grid = Y_grid
+elif y_var == "hf":
+    hf_grid = Y_grid
+elif y_var == "Ag":
+    Ag_grid = Y_grid
 
 # ----------------------------
 # Compute fragility
 # ----------------------------
 if damage_state == "Minor":
     Z = z_minor(W_grid, hs_grid, G_grid, FSR_grid)
-
 elif damage_state == "Moderate":
     Z = z_moderate(W_grid, hs_grid, Bf_grid, Ag_grid, Dc_grid, G_grid, FSR_grid)
-
 elif damage_state == "Extensive":
     Z = z_extensive(W_grid, hs_grid, Bf_grid, Ag_grid, Dc_grid, hf_grid, G_grid, FSR_grid)
-
 elif damage_state == "Complete":
     Z = z_complete(W_grid, Dc_grid, G_grid, FSR_grid)
+else:
+    Z = z_minor(W_grid, hs_grid, G_grid, FSR_grid)
 
 P = logistic(Z)
 
@@ -169,14 +172,14 @@ surf = ax.plot_surface(
     cmap="viridis",
     edgecolor="none",
     antialiased=True,
-    alpha=0.95
+    alpha=0.95,
 )
 
 ax.set_xlabel("FSR (FSR₁ = FSR₂)", labelpad=10)
 ax.set_ylabel(y_var, labelpad=10)
 ax.set_zlabel("P(DS)", labelpad=10)
-ax.set_title(f"Fragility Surface – {damage_state}")
+ax.set_title(f"Fragility Surface – {damage_state}", pad=12)
 
-fig.colorbar(surf, shrink=0.6, aspect=10)
+fig.colorbar(surf, shrink=0.6, aspect=10, label="P(DS)")
 
 st.pyplot(fig)
