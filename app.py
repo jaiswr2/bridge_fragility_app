@@ -282,9 +282,9 @@ with col2:
 with col3:
     st.subheader("Illustrations")
     st.caption("You can replace these with your own figures (bridge, scour, fragility).")
-    st.image("image1.png", caption="Bridge Elevation (placeholder)", use_container_width=True)
-    st.image("image2.png", caption="Scour Configuration (placeholder)", use_container_width=True)
-    st.image("image3.png", caption="Response / Fragility Concept (placeholder)", use_container_width=True)
+    st.image("1.png", caption="Bridge Elevation (placeholder)", use_container_width=True)
+    st.image("2.png", caption="Scour Configuration (placeholder)", use_container_width=True)
+    st.image("3.png", caption="Response / Fragility Concept (placeholder)", use_container_width=True)
 
 st.markdown("---")
 
@@ -436,3 +436,4 @@ plt.tight_layout()
 c1, c2, c3 = st.columns([1, 2, 1])
 with c2:
     st.pyplot(fig)
+
