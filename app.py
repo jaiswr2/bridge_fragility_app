@@ -258,13 +258,13 @@ ax.set_zlabel(
 # EXACTLY 5 TICKS ON ALL AXES
 # ----------------------------------------------------------
 # X-axis (FSR)
-ax.set_xticks(np.linspace(0.0, 0.5, 5))   # 0, 0.125, 0.25, 0.375, 0.5
+ax.set_xticks(np.linspace(0.0, 0.5, 4))   # 0, 0.125, 0.25, 0.375, 0.5
 
 # Y-axis: dynamic 5 ticks
-ax.set_yticks(np.linspace(low, high, 5))
+ax.set_yticks(np.linspace(low, high, 4))
 
 # Z-axis: probability 0 → 1
-ax.set_zticks(np.linspace(0.0, 1.0, 5))
+ax.set_zticks(np.linspace(0.0, 1.0, 4))
 
 # Tiny tick labels
 ax.tick_params(labelsize=5, pad=0.5)
@@ -276,6 +276,7 @@ plt.suptitle(f"{damage_state} Damage State", y=0.92, fontsize=7)
 plt.tight_layout()
 
 st.pyplot(fig)
+
 
 
 
