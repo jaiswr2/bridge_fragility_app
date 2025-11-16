@@ -79,65 +79,62 @@ def split_label(text):
 st.set_page_config(layout="wide")
 st.title("Fragility Surface of Shallow Foundation Bridges")
 
+# ============================================================
+# INPUT PANEL AT TOP — 2 COLUMNS
+# ============================================================
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.subheader("Superstructure")
+    Ls = st.number_input("Span Length Ls (m)", 10.0, 60.0, 30.0)
+    W = st.number_input("Deck Width W (m)", 4.88, 35.0, 12.01)
+    hs = st.number_input("Slab Thickness hs (m)", 0.10, 0.30, 0.225, step=0.005)
+    Ag = st.number_input("Girder Area Ag (m²)", 0.15, 0.70, 0.40)
+
+    st.subheader("Soil")
+    G_input = st.number_input("Soil Shear Modulus G (MPa)", 10.0, 300.0, 98.0)
+
+with col2:
+    st.subheader("Substructure")
+    ncol = st.number_input("Columns per Bent ncol", 2, 6, 2)
+    Hc = st.number_input("Column Height Hc (m)", 3.0, 14.0, 7.0)
+    Dc = st.number_input("Column Diameter Dc (m)", 0.5, 2.5, 1.2)
+
+    st.subheader("Foundation")
+    Bf = st.number_input("Footing Width Bf (m)", 1.5, 8.0, 5.2)
+    hf = st.number_input("Footing Thickness hf (m)", 0.30, 3.00, 1.5)
+
+    st.subheader("Traffic")
+    Wt = st.number_input("Truck Weight Wt (kN)", 0.0, 800.0, 300.0)
+    Tpx = st.number_input("Truck Position Tpx", 0.00, 0.75, 0.30)
+
+st.markdown("---")
+
+# Settings row
+col3, col4 = st.columns(2)
+with col3:
+    damage_state = st.selectbox("Damage State", ["Minor", "Moderate", "Extensive", "Complete"])
+with col4:
+    y_choice = st.selectbox(
+        "Select Y-axis Parameter",
+        [
+            "Soil Shear Modulus G (MPa)",
+            "Deck Width W (m)",
+            "Footing Width Bf (m)",
+            "Column Diameter Dc (m)",
+            "Footing Thickness hf (m)",
+            "Girder Area Ag (m²)",
+            "Truck Weight Wt (kN)",
+            "Truck Position Tpx",
+        ]
+    )
+
+wireframe_toggle = st.checkbox("Show Wireframe Overlay", value=False)
+resolution = st.slider("Grid Resolution", 20, 80, 40)
 
 # ============================================================
-# SIDEBAR INPUTS — Complete Table 5 Parameters
-# ============================================================
-
-# Superstructure
-st.sidebar.header("Superstructure")
-Ls = st.sidebar.number_input("Span Length Ls (m)", 10.0, 60.0, 30.0)
-W = st.sidebar.number_input("Deck Width W (m)", 4.88, 35.0, 12.01)
-hs = st.sidebar.number_input("Slab Thickness hs (m)", 0.10, 0.30, 0.225, step=0.005)
-Ag = st.sidebar.number_input("Girder Area Ag (m²)", 0.15, 0.70, 0.40)
-
-# Substructure
-st.sidebar.header("Substructure")
-ncol = st.sidebar.number_input("Columns per Bent ncol", 2, 6, 2)
-Hc = st.sidebar.number_input("Column Height Hc (m)", 3.0, 14.0, 7.0)
-Dc = st.sidebar.number_input("Column Diameter Dc (m)", 0.5, 2.5, 1.2)
-
-# Foundation
-st.sidebar.header("Foundation")
-Bf = st.sidebar.number_input("Footing Width Bf (m)", 1.5, 8.0, 5.2)
-hf = st.sidebar.number_input("Footing Thickness hf (m)", 0.30, 3.00, 1.5)
-
-# Soil
-st.sidebar.header("Soil")
-G_input = st.sidebar.number_input("Soil Shear Modulus G (MPa)", 10.0, 300.0, 98.0)
-
-# Traffic
-st.sidebar.header("Traffic")
-Wt = st.sidebar.number_input("Truck Weight Wt (kN)", 0.0, 800.0, 300.0)
-Tpx = st.sidebar.number_input("Truck Position Tpx", 0.00, 0.75, 0.30)
-
-# Settings
-st.sidebar.header("Surface Settings")
-damage_state = st.sidebar.selectbox(
-    "Damage State", ["Minor", "Moderate", "Extensive", "Complete"]
-)
-
-y_choice = st.sidebar.selectbox(
-    "Select Y-axis Parameter",
-    [
-        "Soil Shear Modulus G (MPa)",
-        "Deck Width W (m)",
-        "Footing Width Bf (m)",
-        "Column Diameter Dc (m)",
-        "Footing Thickness hf (m)",
-        "Girder Area Ag (m²)",
-        "Truck Weight Wt (kN)",
-        "Truck Position Tpx",
-    ]
-)
-
-wireframe_toggle = st.sidebar.checkbox("Show Wireframe Overlay", value=False)
-
-resolution = st.sidebar.slider("Grid Resolution", 20, 80, 40)
-
-
-# ============================================================
-# GRID
+# GRID (unchanged)
 # ============================================================
 FSR_vals = np.linspace(0, 0.5, resolution)
 
@@ -157,8 +154,7 @@ y_vals = np.linspace(low, high, resolution)
 
 FSR_grid, Y_grid = np.meshgrid(FSR_vals, y_vals)
 
-
-# Base parameter grids
+# Base grids (unchanged)
 W_grid = np.full_like(FSR_grid, W)
 hs_grid = np.full_like(FSR_grid, hs)
 Bf_grid = np.full_like(FSR_grid, Bf)
@@ -169,7 +165,7 @@ G_grid = np.full_like(FSR_grid, G_input)
 Wt_grid = np.full_like(FSR_grid, Wt)
 Tpx_grid = np.full_like(FSR_grid, Tpx)
 
-# Apply Y-axis override
+# Apply Y override
 if y_choice == "Soil Shear Modulus G (MPa)": G_grid = Y_grid
 if y_choice == "Deck Width W (m)": W_grid = Y_grid
 if y_choice == "Footing Width Bf (m)": Bf_grid = Y_grid
@@ -179,10 +175,7 @@ if y_choice == "Girder Area Ag (m²)": Ag_grid = Y_grid
 if y_choice == "Truck Weight Wt (kN)": Wt_grid = Y_grid
 if y_choice == "Truck Position Tpx": Tpx_grid = Y_grid
 
-
-# ============================================================
-# COMPUTE PROBABILITY OF EXCEEDANCE
-# ============================================================
+# Compute probability (unchanged)
 if damage_state == "Minor":
     Z = z_minor(W_grid, hs_grid, G_grid, FSR_grid)
 elif damage_state == "Moderate":
@@ -194,17 +187,20 @@ elif damage_state == "Complete":
 
 P = logistic(Z)
 
-
 # ============================================================
-# PLOT (smaller figure + improved visibility)
+# PLOT — WHITE BACKGROUND (ONLY CHANGE)
 # ============================================================
-fig = plt.figure(figsize=(4.8, 3.0))   # even smaller figure
+fig = plt.figure(figsize=(4.8, 3.0))
 ax = fig.add_subplot(111, projection="3d")
 
-# Your preferred camera angle
+# White background
+ax.set_facecolor("white")
+fig.patch.set_facecolor("white")
+
+# Your viewing angle
 ax.view_init(elev=25, azim=235)
 
-# Main surface
+# Surface
 surface = ax.plot_surface(
     FSR_grid,
     Y_grid,
@@ -215,71 +211,25 @@ surface = ax.plot_surface(
     alpha=0.95
 )
 
-# Optional wireframe
+# Wireframe
 if wireframe_toggle:
     ax.plot_wireframe(
         FSR_grid, Y_grid, P,
-        color="black",
-        linewidth=0.2,
-        alpha=0.5
+        color="black", linewidth=0.2, alpha=0.5
     )
 
-# ----------------------------------------------------------
-# VERY SMALL AXIS LABEL FONT + VERY SMALL PADDING
-# ----------------------------------------------------------
-label_font = 6  # smaller
+# Label styling
+label_font = 6
 
-ax.set_xlabel(
-    split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
-    fontsize=label_font,
-    labelpad=-2        # CLOSE to axis
-)
-
-ax.set_ylabel(
-    split_label(y_choice),
-    fontsize=label_font,
-    labelpad=-2        # CLOSE to axis
-)
-
-# ----------------------------------------------------------
-# FIX Z-AXIS LABEL VISIBILITY COMPLETELY
-# ----------------------------------------------------------
+ax.set_xlabel(split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"), fontsize=label_font, labelpad=0)
+ax.set_ylabel(split_label(y_choice), fontsize=label_font, labelpad=0)
 ax.zaxis.set_rotate_label(False)
+ax.set_zlabel(split_label("Probability of Exceedance"), fontsize=label_font, rotation=0, labelpad=0)
 
-ax.set_zlabel(
-    split_label("Probability of Exceedance"),
-    fontsize=label_font,
-    rotation=90,        # <-- BEST visibility in Streamlit
-    labelpad=-7        # <-- pulls label INTO the figure
-)
+ax.tick_params(labelsize=6, pad=1)
 
-
-# ----------------------------------------------------------
-# RESTORED ORIGINAL TICKS (AUTOMATIC)
-# ----------------------------------------------------------
-ax.tick_params(labelsize=6, pad=1)   # small but readable
-
-# ----------------------------------------------------------
-# Damage state title inside plot
-# ----------------------------------------------------------
 plt.suptitle(f"{damage_state} Damage State", y=0.92, fontsize=7)
 
 plt.tight_layout()
 
 st.pyplot(fig)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
