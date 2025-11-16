@@ -219,7 +219,7 @@ ax.plot_surface(
 # ----------------------------------------------------------
 # AXIS TITLES — KEEP NORMAL SPACING
 # ----------------------------------------------------------
-label_font = 4
+label_font = 5
 
 ax.set_xlabel(
     split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
@@ -243,9 +243,9 @@ ax.set_zlabel(
 # ----------------------------------------------------------
 # TICK LABELS — EXTREMELY CLOSE TO AXIS
 # ----------------------------------------------------------
-ax.tick_params(axis='x', pad=-5, labelsize=5)
-ax.tick_params(axis='y', pad=-5, labelsize=5)
-ax.tick_params(axis='z', pad=-5, labelsize=5)
+ax.tick_params(axis='x', pad=-5, labelsize=4)
+ax.tick_params(axis='y', pad=-5, labelsize=4)
+ax.tick_params(axis='z', pad=-5, labelsize=4)
 
 plt.suptitle(f"{damage_state} Damage State", y=0.90, fontsize=7)
 
@@ -269,6 +269,7 @@ st.markdown(
 )
 st.image(buf, use_container_width=False)
 st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
