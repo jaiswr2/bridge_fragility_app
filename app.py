@@ -190,12 +190,12 @@ P = logistic(Z)
 
 
 # ============================================================
-# 3D PLOT — PURE WHITE, SMALL, HIGH RESOLUTION, PNG METHOD
+# 3D PLOT — CENTERED, PURE WHITE, VERY SMALL LABELS
 # ============================================================
 plt.rcParams['figure.facecolor'] = 'white'
 plt.rcParams['axes.facecolor'] = 'white'
 
-fig = plt.figure(figsize=(2.2, 1.6), dpi=250)     # << VERY SMALL + SHARP
+fig = plt.figure(figsize=(2.2, 1.6), dpi=300)  # high-res small
 ax = fig.add_subplot(111, projection="3d")
 
 ax.set_facecolor("white")
@@ -215,27 +215,53 @@ ax.plot_surface(
     alpha=0.97
 )
 
-# Labels
-label_font = 6
-ax.set_xlabel(split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"), fontsize=label_font)
-ax.set_ylabel(split_label(y_choice), fontsize=label_font)
-ax.set_zlabel(split_label("Probability of Exceedance"), fontsize=label_font)
+# -------------------------------
+# AXIS LABELS — SMALL + TIGHT
+# -------------------------------
+label_font = 5
 
-ax.tick_params(labelsize=5, pad=-5)
+ax.set_xlabel(
+    split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
+    fontsize=label_font,
+    labelpad=-10  # super tight
+)
 
-plt.suptitle(f"{damage_state} Damage State", y=0.92, fontsize=7)
+ax.set_ylabel(
+    split_label(y_choice),
+    fontsize=label_font,
+    labelpad=-10
+)
 
-plt.tight_layout(pad=0.1)
+ax.set_zlabel(
+    split_label("Probability of Exceedance"),
+    fontsize=label_font,
+    rotation=90,
+    labelpad=-5   # pull close
+)
 
-# --- SAVE AS PNG to ensure pure-white output ---
+# Smaller ticks
+ax.tick_params(labelsize=4, pad=0)
+
+plt.suptitle(f"{damage_state} Damage State", y=0.90, fontsize=7)
+
+plt.tight_layout(pad=0.01)
+
+# Save to PNG
 import io
 buf = io.BytesIO()
-plt.savefig(buf, format="png", dpi=250, bbox_inches='tight', facecolor="white")
+plt.savefig(
+    buf,
+    format="png",
+    dpi=300,
+    bbox_inches="tight",
+    facecolor="white"
+)
 buf.seek(0)
 
-# --- Display PNG instead of st.pyplot ---
-st.image(buf)
-
+# Center the image in Streamlit
+st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
+st.image(buf, use_column_width=False)
+st.markdown("</div>", unsafe_allow_html=True)
 
 
 
