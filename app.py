@@ -191,7 +191,7 @@ P = logistic(Z)
 
 # ============================================================
 # ============================================================
-# 3D PLOT — TICKS VERY CLOSE, TITLES NORMAL, CENTERED
+# 3D PLOT — TICKS INSIDE, IMAGE CENTERED, NO OTHER CHANGES
 # ============================================================
 plt.rcParams['figure.facecolor'] = 'white'
 plt.rcParams['axes.facecolor'] = 'white'
@@ -202,10 +202,10 @@ ax = fig.add_subplot(111, projection="3d")
 ax.set_facecolor("white")
 fig.patch.set_facecolor("white")
 
-# Camera angle
+# Camera angle (unchanged)
 ax.view_init(elev=25, azim=235)
 
-# Surface
+# Surface (unchanged)
 ax.plot_surface(
     FSR_grid,
     Y_grid,
@@ -216,76 +216,38 @@ ax.plot_surface(
     alpha=0.97
 )
 
-# ----------------------------------------------------------
-# AXIS TITLES — KEEP NORMAL SPACING
-# ----------------------------------------------------------
+# Axis titles (unchanged)
 label_font = 4
-
-ax.set_xlabel(
-    split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
-    fontsize=label_font,
-    labelpad=-10
-)
-
-ax.set_ylabel(
-    split_label(y_choice),
-    fontsize=label_font,
-    labelpad=-10
-)
-
-ax.set_zlabel(
-    split_label("Probability of Exceedance"),
-    fontsize=label_font,
-    rotation=270,
-    labelpad=-13
-)
+ax.set_xlabel(split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
+              fontsize=label_font, labelpad=-10)
+ax.set_ylabel(split_label(y_choice),
+              fontsize=label_font, labelpad=-10)
+ax.set_zlabel(split_label("Probability of Exceedance"),
+              fontsize=label_font, rotation=270, labelpad=-13)
 
 # ----------------------------------------------------------
-# TICK LABELS — EXTREMELY CLOSE TO AXIS
+# FIX 1: TICK LABELS VERY CLOSE TO AXIS
 # ----------------------------------------------------------
-ax.tick_params(axis='x', pad=-5, labelsize=4)
-ax.tick_params(axis='y', pad=-5, labelsize=4)
-ax.tick_params(axis='z', pad=-5, labelsize=4)
+ax.tick_params(axis='x', pad=-8, labelsize=4)
+ax.tick_params(axis='y', pad=-8, labelsize=4)
+ax.tick_params(axis='z', pad=-8, labelsize=4)
 
 plt.suptitle(f"{damage_state} Damage State", y=0.90, fontsize=7)
 
 plt.tight_layout(pad=0.1)
 
-# Save to PNG
+# Save PNG
 import io
 buf = io.BytesIO()
-plt.savefig(
-    buf, format="png", dpi=300,
-    bbox_inches='tight', facecolor="white"
-)
+plt.savefig(buf, format="png", dpi=300, bbox_inches='tight', facecolor="white")
 buf.seek(0)
 
 # ----------------------------------------------------------
-# TRUE CENTERING OF IMAGE IN STREAMLIT
+# FIX 2: TRUE CENTERING
 # ----------------------------------------------------------
-st.markdown(
-    "<div style='display:flex; justify-content:center;'>",
-    unsafe_allow_html=True
-)
-st.image(buf, use_container_width=False)
-st.markdown("</div>", unsafe_allow_html=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+st.markdown("<center>", unsafe_allow_html=True)
+st.image(buf)
+st.markdown("</center>", unsafe_allow_html=True)
 
 
 
