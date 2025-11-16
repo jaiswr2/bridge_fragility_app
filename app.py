@@ -237,7 +237,7 @@ ax.set_zlabel(
     split_label("Probability of Exceedance"),
     fontsize=label_font,
     rotation=90,
-    labelpad=-10
+    labelpad=-15
 )
 
 # ----------------------------------------------------------
@@ -269,6 +269,7 @@ st.markdown(
 )
 st.image(buf, use_container_width=False)
 st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
