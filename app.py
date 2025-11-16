@@ -232,13 +232,13 @@ label_font = 6   # very small and readable
 ax.set_xlabel(
     split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
     fontsize=label_font,
-    labelpad=0.1
+    labelpad=0.01
 )
 
 ax.set_ylabel(
     split_label(y_choice),
     fontsize=label_font,
-    labelpad=6
+    labelpad=0.01
 )
 
 # -----------------------------------------
@@ -248,8 +248,8 @@ ax.zaxis.set_rotate_label(False)       # prevent auto rotation
 ax.set_zlabel(
     split_label("Probability of Exceedance"),
     fontsize=label_font,
-    rotation=0,                         # <-- horizontal for visibility
-    labelpad=14                         # <-- pushes label inward
+    rotation=90,                         # <-- horizontal for visibility
+    labelpad=0.1                        # <-- pushes label inward
 )
 
 # Move tick labels slightly inward
@@ -262,6 +262,7 @@ plt.suptitle(f"{damage_state} Damage State", y=0.93, fontsize=8)
 plt.tight_layout()
 
 st.pyplot(fig)
+
 
 
 
