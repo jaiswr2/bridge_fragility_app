@@ -281,7 +281,7 @@ with col2:
 # ---------- COLUMN 3: Images / schematic ----------
 with col3:
     st.subheader("Illustrations")
-    st.caption("You can replace these with your own figures (bridge, scour, fragility).")
+
     st.image("1.png", caption="Bridge Elevation (placeholder)", use_container_width=True)
     st.image("2.png", caption="Scour Configuration (placeholder)", use_container_width=True)
     st.image("3.png", caption="Response / Fragility Concept (placeholder)", use_container_width=True)
@@ -436,4 +436,5 @@ plt.tight_layout()
 c1, c2, c3 = st.columns([1, 2, 1])
 with c2:
     st.pyplot(fig)
+
 
