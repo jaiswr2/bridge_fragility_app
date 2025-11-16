@@ -191,7 +191,7 @@ P = logistic(Z)
 
 # ============================================================
 # ============================================================
-# 3D PLOT — TICKS VERY CLOSE, TITLES NORMAL, CENTERED
+# 3D PLOT — WHITE BACKGROUND, THIN LINES, CENTERED
 # ============================================================
 plt.rcParams['figure.facecolor'] = 'white'
 plt.rcParams['axes.facecolor'] = 'white'
@@ -205,19 +205,28 @@ fig.patch.set_facecolor("white")
 # Camera angle
 ax.view_init(elev=25, azim=235)
 
-# Surface
+# Surface with thin lines
 ax.plot_surface(
     FSR_grid,
     Y_grid,
     P,
     cmap="viridis",
-    edgecolor="none",
+    edgecolor="black",
+    linewidth=0.1,
     shade=True,
     alpha=0.97
 )
 
+# Thin axis lines
+ax.xaxis.pane.set_edgecolor('black')
+ax.yaxis.pane.set_edgecolor('black')
+ax.zaxis.pane.set_edgecolor('black')
+ax.xaxis.pane.set_linewidth(0.3)
+ax.yaxis.pane.set_linewidth(0.3)
+ax.zaxis.pane.set_linewidth(0.3)
+
 # ----------------------------------------------------------
-# AXIS TITLES — KEEP NORMAL SPACING
+# AXIS TITLES
 # ----------------------------------------------------------
 label_font = 4
 
@@ -241,7 +250,7 @@ ax.set_zlabel(
 )
 
 # ----------------------------------------------------------
-# TICK LABELS — EXTREMELY CLOSE TO AXIS
+# TICK LABELS
 # ----------------------------------------------------------
 ax.tick_params(axis='x', pad=-5, labelsize=4)
 ax.tick_params(axis='y', pad=-5, labelsize=4)
@@ -261,7 +270,7 @@ plt.savefig(
 buf.seek(0)
 
 # ----------------------------------------------------------
-# TRUE CENTERING OF IMAGE IN STREAMLIT
+# CENTER IMAGE IN STREAMLIT
 # ----------------------------------------------------------
 st.markdown(
     "<div style='display:flex; justify-content:center;'>",
