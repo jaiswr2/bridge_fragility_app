@@ -190,11 +190,15 @@ P = logistic(Z)
 
 
 # ============================================================
-# PLOT — VERY SMALL + WHITE BACKGROUND
+# PLOT — SMALLER, PURE WHITE BACKGROUND, HIGH RESOLUTION
 # ============================================================
-fig = plt.figure(figsize=(3.0, 2.0))   # << 4× smaller
+plt.rcParams['figure.facecolor'] = 'white'
+plt.rcParams['axes.facecolor'] = 'white'
+
+fig = plt.figure(figsize=(2.5, 1.8), dpi=200)   # << SMALL + HIGH RES
 ax = fig.add_subplot(111, projection="3d")
 
+# Force white background everywhere
 ax.set_facecolor("white")
 fig.patch.set_facecolor("white")
 
@@ -214,16 +218,18 @@ ax.plot_surface(
 
 # Labels
 label_font = 6
-
 ax.set_xlabel(split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"), fontsize=label_font)
 ax.set_ylabel(split_label(y_choice), fontsize=label_font)
 ax.zaxis.set_rotate_label(False)
 ax.set_zlabel(split_label("Probability of Exceedance"), fontsize=label_font, rotation=0)
 
-ax.tick_params(labelsize=6, pad=1)
+ax.tick_params(labelsize=6, pad=0)
 
+# Title
 plt.suptitle(f"{damage_state} Damage State", y=0.92, fontsize=7)
 
-plt.tight_layout()
+# Remove padding so background stays white
+plt.tight_layout(pad=0.1)
 
 st.pyplot(fig)
+
