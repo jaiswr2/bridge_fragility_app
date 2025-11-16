@@ -232,7 +232,7 @@ label_font = 6   # very small and readable
 ax.set_xlabel(
     split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
     fontsize=label_font,
-    labelpad=6
+    labelpad=2
 )
 
 ax.set_ylabel(
@@ -262,5 +262,6 @@ plt.suptitle(f"{damage_state} Damage State", y=0.93, fontsize=8)
 plt.tight_layout()
 
 st.pyplot(fig)
+
 
 
