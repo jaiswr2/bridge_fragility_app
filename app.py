@@ -196,15 +196,15 @@ P = logistic(Z)
 
 
 # ============================================================
-# PLOT (smaller figure + labels visible)
+# PLOT (smaller figure + improved label visibility)
 # ============================================================
-fig = plt.figure(figsize=(6, 4))   # <-- smaller image
+fig = plt.figure(figsize=(6, 4))  
 ax = fig.add_subplot(111, projection="3d")
 
-# Best viewing angle (your preferred one)
+# Perfect viewing angle
 ax.view_init(elev=25, azim=235)
 
-# Surface plot
+# Main surface
 surface = ax.plot_surface(
     FSR_grid,
     Y_grid,
@@ -215,7 +215,7 @@ surface = ax.plot_surface(
     alpha=0.95,
 )
 
-# Optional wireframe
+# Wireframe overlay (optional)
 if wireframe_toggle:
     ax.plot_wireframe(
         FSR_grid,
@@ -226,18 +226,41 @@ if wireframe_toggle:
         alpha=0.6,
     )
 
-# Axis labels (multi-line)
-ax.set_xlabel(split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"), labelpad=10)
-ax.set_ylabel(split_label(y_choice), labelpad=10)
-ax.set_zlabel(split_label("Probability of Exceedance"), labelpad=10)
+# ---------------------------
+# SMALLER AXIS LABEL FONTS
+# ---------------------------
+label_font = 7  # half size
 
-# Keep labels inside frame
-ax.tick_params(pad=3)
+ax.set_xlabel(
+    split_label("Foundation Scour Ratio (FSR₁ = FSR₂)"),
+    labelpad=8,
+    fontsize=label_font
+)
+ax.set_ylabel(
+    split_label(y_choice),
+    labelpad=8,
+    fontsize=label_font
+)
 
-# Damage state (inside image)
-plt.suptitle(f"{damage_state} Damage State", y=0.93, fontsize=11)
+# ---------------------------
+# FIX Z-AXIS LABEL VISIBILITY
+# ---------------------------
+ax.zaxis.set_rotate_label(False)   # prevent auto-tilt
+ax.set_zlabel(
+    split_label("Probability of Exceedance"),
+    labelpad=12,                   # pull closer so visible
+    fontsize=label_font,
+    rotation=90                    # vertical orientation for best readability
+)
 
-# Prevent clipping
+# Tighter tick spacing
+ax.tick_params(labelsize=6, pad=2)
+
+# Damage state inside figure
+plt.suptitle(f"{damage_state} Damage State", y=0.93, fontsize=10)
+
+# Fix margin clipping
 plt.tight_layout()
 
 st.pyplot(fig)
+
