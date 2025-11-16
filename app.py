@@ -250,7 +250,7 @@ ax.set_zlabel(
     split_label("Probability of Exceedance"),
     fontsize=label_font,
     rotation=90,        # <-- BEST visibility in Streamlit
-    labelpad=-8        # <-- pulls label INTO the figure
+    labelpad=-7        # <-- pulls label INTO the figure
 )
 
 
@@ -267,6 +267,7 @@ plt.suptitle(f"{damage_state} Damage State", y=0.92, fontsize=7)
 plt.tight_layout()
 
 st.pyplot(fig)
+
 
 
 
